@@ -95,11 +95,12 @@ docker run --detach --network=testnet                                         \
 # print instructions.
 clear
 echo "Now browse to :"
+echo "Firefox inside VNC Server -> http://localhost:5800"
 echo "Cypress inside VNC Server -> http://localhost:5700"
 echo ""
 echo "Credentials:"
 echo "https://server  -> username: alice      password: test123"
-teardown
+# teardown
 
 # To debug, e.g. running web-access-control-tests jest interactively,
 # comment out `teardown` and uncomment this instead:
