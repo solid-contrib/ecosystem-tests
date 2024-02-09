@@ -46,10 +46,59 @@ teardown || true
 #setup $1
 setup latest-passing-solid-test-suite
 waitForNss server
-runTests webid-provider-tests v2.0.3
-runTests solid-crud-tests v6.0.0
-waitForNss thirdparty
-runTests web-access-control-tests v7.1.0
+# runTests webid-provider-tests v2.0.3
+# runTests solid-crud-tests v6.0.0
+# waitForNss thirdparty
+# runTests web-access-control-tests v7.1.0
+echo NSS is running
+echo "starting firefox tester"
+docker run --detach --name=firefox          --network=testnet -p 5800:5800  --shm-size 2g jlesage/firefox:latest
+echo starting VNC and Cypress
+ENV_ROOT=$(pwd)
+export ENV_ROOT=${ENV_ROOT}
+
+##################
+### VNC Server ###
+##################
+
+# remove previous x11 unix socket file, avoid any problems while mounting new one.
+rm -rf "${ENV_ROOT}/temp/.X11-unix"
+
+# try to change DISPLAY_WIDTH, DISPLAY_HEIGHT to make it fit in your screen,
+# NOTE: please do not commit any change related to resolution.
+docker run --detach --network=testnet                                         \
+  --name=vnc-server                                                           \
+  -p 5700:8080                                                                \
+  -e RUN_XTERM=no                                                             \
+  -e DISPLAY_WIDTH=1920                                                       \
+  -e DISPLAY_HEIGHT=1080                                                      \
+  -v "${ENV_ROOT}/temp/.X11-unix:/tmp/.X11-unix"                              \
+  theasp/novnc:latest
+
+###############
+### Cypress ###
+###############
+
+# create cypress and attach its display to the VNC server container. 
+# this way you can view inside cypress container through vnc server.
+docker run --detach --network=testnet                                         \
+  --name="cypress.docker"                                                     \
+  -e DISPLAY=vnc-server:0.0                                                   \
+  -v "${ENV_ROOT}/tests/bookmakrs/docker/tls:/tls"                            \
+  -v "${ENV_ROOT}/tests/bookmarks/cypress:/bookmarks"                         \
+  -v "${ENV_ROOT}/temp/.X11-unix:/tmp/.X11-unix"                              \
+  -w /bookmarks                                                               \
+  --entrypoint cypress                                                        \
+  cypress/included:13.3.0                                                     \
+  open --project .
+
+# print instructions.
+clear
+echo "Now browse to :"
+echo "Cypress inside VNC Server -> http://localhost:5700"
+echo ""
+echo "Credentials:"
+echo "https://server  -> username: alice      password: test123"
 teardown
 
 # To debug, e.g. running web-access-control-tests jest interactively,
