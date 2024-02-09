@@ -23,3 +23,4 @@ This test, in its current form, uses the following live servers:
 6) See the bookmark and edit it
 7) Go back to Markbook and (FIXME: https://github.com/michielbdejong/markbook/issues/1) refresh the page
 8) See the edit from Poddit show up in Markbook
+9) Go to your pod explorer and verify that the WAC rules on there give both apps minimally required access to your pod
