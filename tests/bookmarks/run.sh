@@ -6,8 +6,12 @@ function setup {
   docker network create testnet
   docker build -t server --build-arg BRANCH=$1 tests/bookmarks/docker/server
   docker build -t cookie tests/bookmarks/docker/cookie
+  docker build -t launcher tests/bookmarks/docker/launcher
+  docker build -t markbook --build-arg REPO=https://github.com/michielbdejong/markbook tests/bookmarks/docker/static
   docker run -d --env-file tests/bookmarks/server-env.list --name server --network=testnet -w /node-solid-server server /node-solid-server/bin/solid-test start --config-file /node-solid-server/config.json
   docker run -d --env-file tests/bookmarks/thirdparty-env.list --name thirdparty --network=testnet -w /node-solid-server -v `pwd`/tests/bookmarks:/surface server /node-solid-server/bin/solid-test start --config-file /surface/thirdparty-config.json
+  docker run -d --network=testnet --name launcher -v /Users/michiel/gh/pdsinterop/launcher-exploration/:/app -p 3000:3000 launcher
+  docker run -d --network=testnet --name markbook -p 3001:3000 markbook
 }
 function teardown {
   docker stop `docker ps --filter network=testnet -q`
@@ -84,7 +88,7 @@ docker run --detach --network=testnet                                         \
 docker run --detach --network=testnet                                         \
   --name="cypress.docker"                                                     \
   -e DISPLAY=vnc-server:0.0                                                   \
-  -v "${ENV_ROOT}/tests/bookmakrs/docker/tls:/tls"                            \
+  -v "${ENV_ROOT}/tests/bookmarks/docker/tls:/tls"                            \
   -v "${ENV_ROOT}/tests/bookmarks/cypress:/bookmarks"                         \
   -v "${ENV_ROOT}/temp/.X11-unix:/tmp/.X11-unix"                              \
   -w /bookmarks                                                               \
