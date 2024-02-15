@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:18
 ARG BRANCH=main
 RUN echo Testing branch ${BRANCH} of NSS
 RUN git clone https://github.com/nodeSolidServer/node-solid-server
