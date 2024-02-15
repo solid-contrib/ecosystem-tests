@@ -7,7 +7,7 @@ function setup {
   docker build -t server --build-arg BRANCH=$1 tests/bookmarks/docker/server
   docker build -t cookie tests/bookmarks/docker/cookie
   docker run -d --env-file tests/bookmarks/server-env.list --name server --network=testnet -w /node-solid-server server /node-solid-server/bin/solid-test start --config-file /node-solid-server/config.json
-  docker run -d --env-file tests/bookmarks/thirdparty-env.list --name thirdparty --network=testnet -w /node-solid-server server /node-solid-server/bin/solid-test start --config-file /node-solid-server/config.json
+  docker run -d --env-file tests/bookmarks/thirdparty-env.list --name thirdparty --network=testnet -w /node-solid-server -v `pwd`/tests/bookmarks:/surface server /node-solid-server/bin/solid-test start --config-file /surface/thirdparty-config.json
 }
 function teardown {
   docker stop `docker ps --filter network=testnet -q`
