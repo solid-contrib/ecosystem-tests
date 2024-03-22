@@ -102,8 +102,9 @@ echo "Now browse to :"
 echo "Firefox inside VNC Server -> http://localhost:5800"
 echo "Cypress inside VNC Server -> http://localhost:5700"
 echo ""
-echo "Credentials:"
-echo "https://server  -> username: alice      password: test123"
+echo "FIXME: logging in to http://markbook:3000 fails"
+echo "See https://github.com/solid-contrib/ecosystem-tests/pull/3#issuecomment-2015198406"
+echo "Credentials:"custom provider: https://server / username: alice / password: test123"
 # teardown
 
 # To debug, e.g. running web-access-control-tests jest interactively,
